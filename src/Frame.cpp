@@ -39,8 +39,18 @@ void Frame::update(double dt)
 
 void Frame::draw()
 {
-    ofSetColor(0, 255, 0);
+    ofDisableAntiAliasing();
+
+    // Background
+    ofSetColor(backgroundColor);
     ofRect(displayX, displayY, displayWidth, displayHeight);
+
+    // Borders
+    ofSetColor(borderColor);
+    ofLine(displayX, displayY, displayX + displayWidth, displayY); // Top
+    ofLine(displayX, displayY + displayHeight, displayX + displayWidth, displayY + displayHeight); // Bottom
+    ofLine(displayX + 1, displayY, displayX + 1, displayY + displayHeight); // Left
+    ofLine(displayX + displayWidth, displayY, displayX + displayWidth, displayY + displayHeight); // Right
 
     // Draw buttons
     for (unsigned int i = 0; i < buttons.size(); i++) {
@@ -75,20 +85,22 @@ void Frame::reconfigure()
 
             b->calcMinSize();
 
-            b->displayHeight = b->minHeight;
-            b->displayWidth = b->minWidth;
+            int buttonWidth = b->getMinWidth();
+            int buttonHeight = b->getMinHeight();
 
-            b->displayX = currentX;
+            int buttonX = currentX;
+
+            int buttonY;
 
             if (b->marginY > paddingY) {
-                b->displayY = currentY + b->marginY;
+                buttonY = currentY + b->marginY;
             } else {
-                b->displayY = currentY + paddingY;
+                buttonY = currentY + paddingY;
             }
 
-            b->reconfigure();
+            b->reconfigure(buttonX, buttonY, buttonWidth, buttonHeight);
 
-            currentX += b->displayWidth;
+            currentX += b->getDisplayWidth();
 
             // If button is not the last button
             if (i < buttons.size()-1) {
@@ -109,9 +121,9 @@ void Frame::reconfigure()
 
             // Get the total height of the button, displayHeight + margin or padding
             if (b->marginY > paddingY) {
-                totalHeight = 2*b->marginY + b->displayHeight;
+                totalHeight = 2*b->marginY + b->getDisplayHeight();
             } else {
-                totalHeight = 2*paddingX + b->displayHeight;
+                totalHeight = 2*paddingX + b->getDisplayHeight();
             }
 
             // Figure out the height of the frame
@@ -133,8 +145,7 @@ void Frame::setPosition(int x, int y)
 
 void Frame::addButton(std::string text, functionPointer func, int startState)
 {
-    Button b = Button(text, func, &font);
-    b.state = startState;
+    Button b = Button(text, func, &font, startState);
 
     buttons.push_back(b);
 

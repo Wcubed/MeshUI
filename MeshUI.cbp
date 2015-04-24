@@ -60,12 +60,6 @@
 		<Unit filename="src/SphereMesh.h">
 			<Option virtualFolder="src/" />
 		</Unit>
-		<Unit filename="src/UI.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/UI.h">
-			<Option virtualFolder="src/" />
-		</Unit>
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>

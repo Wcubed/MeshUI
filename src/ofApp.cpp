@@ -13,6 +13,7 @@ void ofApp::setup(){
 
     // Add buttons
     frame.addButton("Quit", &quitButtonFunction);
+    frame.addButton("Button with long name that does nothing", &quitButtonFunction, BUTTON_STATE_DISABLED);
 }
 
 //--------------------------------------------------------------

@@ -34,6 +34,10 @@ class Frame
         // Font size
         int fontSize = 12;
 
+        // Colors
+        ofColor backgroundColor = ofColor(0, 0, 0, 100);
+        ofColor borderColor = ofColor(0, 150, 255);
+
         // Position
         int posX;
         int posY;

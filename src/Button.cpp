@@ -5,11 +5,12 @@ Button::Button()
     //ctor
 }
 
-Button::Button(std::string _text, functionPointer _func, ofTrueTypeFont* _font)
+Button::Button(std::string _text, functionPointer _func, ofTrueTypeFont* _font, int startState)
 {
     text = _text;
     func = _func;
     font = *_font;
+    state = startState;
 }
 
 Button::~Button()
@@ -19,14 +20,19 @@ Button::~Button()
 
 void Button::calcMinSize()
 {
-    minWidth = 2*paddingX + font.stringWidth(text);
+    minWidth = 2*paddingX + font.stringWidth(text) + 3;
     minHeight = 2*paddingY + font.getSize();
 }
 
-void Button::reconfigure()
+void Button::reconfigure(int x, int y, int width, int height)
 {
+    displayX = x;
+    displayY = y;
+    displayWidth = width;
+    displayHeight = height;
+
     textX = displayX + paddingX;
-    textY = displayY + displayHeight/2 + font.getSize()/2;
+    textY = displayY + displayHeight/2 + font.getSize()/3;
 }
 
 void Button::update(int mouseX, int mouseY, bool* mouseButtons)
@@ -59,25 +65,44 @@ void Button::update(int mouseX, int mouseY, bool* mouseButtons)
 void Button::draw()
 {
     ofColor backgroundColor;
+    ofColor textColor;
 
     switch (state) {
     case BUTTON_STATE_DISABLED:
         backgroundColor = disabledColor;
+        textColor = ofColor(100);
         break;
     case BUTTON_STATE_IDLE:
         backgroundColor = idleColor;
+        textColor = ofColor(255);
         break;
     case BUTTON_STATE_HOVER:
         backgroundColor = hoverColor;
+        textColor = ofColor(255);
         break;
     case BUTTON_STATE_PRESSED:
     case BUTTON_STATE_CLICKED:
         backgroundColor = pressedColor;
+        textColor = ofColor(255);
         break;
     }
+
+    ofDisableAntiAliasing();
+
+    // Background
     ofSetColor(backgroundColor);
-    ofRect(displayX, displayY, displayWidth, displayHeight);
-    ofSetColor(0);
+    ofRect(displayX + colorBorder + 1, displayY + colorBorder, displayWidth - (colorBorder + 4), displayHeight - (colorBorder + 3));
+
+    // Borders
+    ofSetColor(borderColor);
+    ofLine(displayX, displayY, displayX + displayWidth, displayY); // Top
+    ofLine(displayX, displayY + displayHeight, displayX + displayWidth, displayY + displayHeight); // Bottom
+    ofLine(displayX + 1, displayY, displayX + 1, displayY + displayHeight); // Left
+    ofLine(displayX + displayWidth, displayY, displayX + displayWidth, displayY + displayHeight); // Right
+
+    // Text
+    ofEnableAntiAliasing();
+    ofSetColor(textColor);
     font.drawString(text, textX, textY);
 }
 
