@@ -23,8 +23,14 @@ struct Button {
     int y;
     int textX;
     int textY;
+
     int width;
     int height;
+
+    int marginX;
+    int marginY;
+    int paddingX;
+    int paddingY;
 };
 
 class UI
@@ -57,19 +63,16 @@ class UI
         int marginX = 10;
         int marginY = 10;
 
-        int buttonMarginX = 7;
+        int fontSize = 12;
 
-        int menuBarHeight = 25;
-        int fadeOutLength = 100;
-
-        int lineWidth = 1;
-
-        ofColor color = ofColor(0, 255, 255, 200);
-        ofColor secColor = ofColor(255, 128, 0, 200);
+        ofColor color = ofColor(0, 100, 200);
+        ofColor secColor = ofColor(255, 128, 0);
 
         // ---------- Variables ----------
-        int width;
-        int height;
+        int screenWidth;
+        int screenHeight;
+
+        int height = 10;
 
         int mouseX;
         int mouseY;
@@ -78,9 +81,6 @@ class UI
 
         // ---------- Objects ----------
         ofTrueTypeFont font;
-
-        ofMesh menuMesh;
-        ofMesh lineMesh;
 
         std::vector<Button> buttons;
 };

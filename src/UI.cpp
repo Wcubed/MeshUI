@@ -17,143 +17,16 @@ UI::~UI()
 // -------------------- Setup --------------------
 
 void UI::setup(int w, int h) {
-    width = w;
-    height = h;
+    screenWidth = w;
+    screenHeight = h;
 
     // Load font
-    if (!font.loadFont("Ubuntu-R.ttf", 12)) {
+    if (!font.loadFont("Ubuntu-R.ttf", fontSize)) {
         std::cout << "UI:Error: Font not loaded." << std::endl;
         std::exit(1);
     } else {
         std::cout << "UI: Font loaded." << std::endl;
     }
-
-
-    // Set colors
-    ofColor lightColor = color;
-    lightColor.setBrightness(128);
-    lightColor.a = 200;
-
-    ofColor darkColor = color;
-    darkColor.setBrightness(128);
-    darkColor.a = 50;
-
-    ofColor black(0, 0, 0, 0);
-
-    // Create vertices
-    ofVec3f topLeft(marginX, marginY, 0.0);
-    ofVec3f topRight(width - marginX, marginY, 0.0);
-    ofVec3f topMiddleLeft(marginX + fadeOutLength, marginY, 0.0);
-    ofVec3f topMiddleRight(width - marginX - fadeOutLength, marginY, 0.0);
-
-    ofVec3f middleLeft(marginX, marginY + menuBarHeight/2, 0.0);
-    ofVec3f middleRight(width - marginX, marginY + menuBarHeight/2, 0.0);
-    ofVec3f middleMiddleLeft(marginX + fadeOutLength, marginY + menuBarHeight/2, 0.0);
-    ofVec3f middleMiddleRight(width - marginX - fadeOutLength, marginY + menuBarHeight/2, 0.0);
-
-    ofVec3f bottomLeft(marginX, marginY + menuBarHeight, 0.0);
-    ofVec3f bottomRight(width - marginX, marginY + menuBarHeight, 0.0);
-    ofVec3f bottomMiddleLeft(marginX + fadeOutLength, marginY + menuBarHeight, 0.0);
-    ofVec3f bottomMiddleRight(width - marginX - fadeOutLength, marginY + menuBarHeight, 0.0);
-
-    // ---------- Menu mesh ----------
-
-    // Set menuMesh mode
-    menuMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-    menuMesh.enableColors();
-    menuMesh.enableIndices();
-
-    // Add vertices
-    // 0 - 1 - 2 - 3
-    // 4 - 5 - 6 - 7
-    // 8 - 9 - 10- 11
-    menuMesh.addVertex(topLeft);
-    menuMesh.addColor(black);
-    menuMesh.addVertex(topMiddleLeft);
-    menuMesh.addColor(lightColor);
-    menuMesh.addVertex(topMiddleRight);
-    menuMesh.addColor(lightColor);
-    menuMesh.addVertex(topRight);
-    menuMesh.addColor(black);
-
-    menuMesh.addVertex(middleLeft);
-    menuMesh.addColor(black);
-    menuMesh.addVertex(middleMiddleLeft);
-    menuMesh.addColor(darkColor);
-    menuMesh.addVertex(middleMiddleRight);
-    menuMesh.addColor(darkColor);
-    menuMesh.addVertex(middleRight);
-    menuMesh.addColor(black);
-
-    menuMesh.addVertex(bottomLeft);
-    menuMesh.addColor(black);
-    menuMesh.addVertex(bottomMiddleLeft);
-    menuMesh.addColor(lightColor);
-    menuMesh.addVertex(bottomMiddleRight);
-    menuMesh.addColor(lightColor);
-    menuMesh.addVertex(bottomRight);
-    menuMesh.addColor(black);
-
-    // Connect to make triangles
-    menuMesh.addIndex(0);
-    menuMesh.addIndex(4);
-    menuMesh.addIndex(1);
-    menuMesh.addIndex(5);
-    menuMesh.addIndex(2);
-    menuMesh.addIndex(6);
-    menuMesh.addIndex(3);
-    menuMesh.addIndex(7);
-
-    menuMesh.addIndex(11);
-    menuMesh.addIndex(6);
-    menuMesh.addIndex(10);
-    menuMesh.addIndex(5);
-    menuMesh.addIndex(9);
-    menuMesh.addIndex(4);
-    menuMesh.addIndex(8);
-
-    // ----------Line mesh ----------
-
-    // Set lineMesh mode
-    lineMesh.setMode(OF_PRIMITIVE_LINES);
-    lineMesh.enableColors();
-    lineMesh.enableIndices();
-
-    // Add vertices
-    // 0 - 1 - 2 - 3
-    // 4 - 5 - 6 - 7
-    lineMesh.addVertex(topLeft);
-    lineMesh.addColor(black);
-    lineMesh.addVertex(topMiddleLeft);
-    lineMesh.addColor(color);
-    lineMesh.addVertex(topMiddleRight);
-    lineMesh.addColor(color);
-    lineMesh.addVertex(topRight);
-    lineMesh.addColor(black);
-
-    lineMesh.addVertex(bottomLeft);
-    lineMesh.addColor(black);
-    lineMesh.addVertex(bottomMiddleLeft);
-    lineMesh.addColor(color);
-    lineMesh.addVertex(bottomMiddleRight);
-    lineMesh.addColor(color);
-    lineMesh.addVertex(bottomRight);
-    lineMesh.addColor(black);
-
-    // Connect to make lines
-    lineMesh.addIndex(0);
-    lineMesh.addIndex(1);
-    lineMesh.addIndex(1);
-    lineMesh.addIndex(2);
-    lineMesh.addIndex(2);
-    lineMesh.addIndex(3);
-
-    lineMesh.addIndex(4);
-    lineMesh.addIndex(5);
-    lineMesh.addIndex(5);
-    lineMesh.addIndex(6);
-    lineMesh.addIndex(6);
-    lineMesh.addIndex(7);
 
     // Reconfigure menu
     reconfigure();
@@ -168,7 +41,9 @@ void UI::update(double dt) {
         if (b->state != BUTTON_STATE_DISABLED) {
             if (mouseX >= b->x and mouseX <= b->x + b->width and mouseY >= b->y and mouseY <= b->y + b->height) {
                 if (mouseButtons[0]) {
-                    b->state = BUTTON_STATE_PRESSED;
+                    if (b->state == BUTTON_STATE_HOVER) {
+                        b->state = BUTTON_STATE_PRESSED;
+                    }
                 } else if (b->state == BUTTON_STATE_PRESSED) {
                     b->state = BUTTON_STATE_CLICKED;
                 } else {
@@ -184,12 +59,22 @@ void UI::update(double dt) {
 // -------------------- Draw --------------------
 
 void UI::draw() {
-    ofSetColor(color);
     ofDisableAntiAliasing();
 
-    // Draw background
-    menuMesh.draw();
-    lineMesh.draw();
+    ofColor buttonColor(54, 0, 140);
+
+    ofColor buttonSecColor(0, 100, 255);
+
+    ofSetColor(0, 0, 0, 100);
+    ofFill();
+
+    ofRect(marginX, marginY, screenWidth - marginX*2, height);
+
+    ofSetColor(color);
+    ofLine(marginX, marginY, screenWidth - marginX, marginY);
+    ofLine(marginX, marginY + height, screenWidth - marginX, marginY + height);
+    ofLine(marginX+1, marginY, marginX+1, marginY + height);
+    ofLine(screenWidth - marginX, marginY, screenWidth - marginX, marginY + height);
 
     // Draw buttons
     ofEnableAntiAliasing();
@@ -200,21 +85,21 @@ void UI::draw() {
 
         switch (b.state) {
         case BUTTON_STATE_DISABLED:
-            backgroundColor = ofColor(0, 0, 0, 0);
-            textColor = ofColor(0, 0, 0, 100);
+            backgroundColor = ofColor(0, 0, 0, 200);
+            textColor = ofColor(200, 200, 200, 100);
             break;
         case BUTTON_STATE_IDLE:
-            backgroundColor = ofColor(0, 0, 0, 0);
-            textColor = ofColor(color);
+            backgroundColor = ofColor(0, 0, 0, 200);
+            textColor = ofColor(255);
             break;
         case BUTTON_STATE_HOVER:
-            backgroundColor = ofColor(color);
-            textColor = ofColor(0);
+            backgroundColor = ofColor(buttonColor);
+            textColor = ofColor(255);
             break;
         case BUTTON_STATE_PRESSED:
         case BUTTON_STATE_CLICKED:
-            backgroundColor = ofColor(secColor);
-            textColor = ofColor(0);
+            backgroundColor = ofColor(buttonSecColor);
+            textColor = ofColor(255);
             break;
         }
 
@@ -223,31 +108,22 @@ void UI::draw() {
 
         ofSetColor(textColor);
         font.drawString(b.text, b.textX, b.textY);
+
+        ofDisableAntiAliasing();
+
+        ofSetColor(color);
+        ofLine(b.x, b.y, b.x + b.width, b.y);
+        ofLine(b.x, b.y + b.height, b.x + b.width, b.y + b.height);
+        ofLine(b.x+1, b.y, b.x+1, b.y + b.height);
+        ofLine(b.x + b.width, b.y, b.x + b.width, b.y + b.height);
     }
 }
 
 // -------------------- Reconfigure --------------------
 
 void UI::reconfigure() {
-    // 0 - 1 - 2 - 3
-    // 4 - 5 - 6 - 7
-    // 8 - 9 - 10- 11
 
-    menuMesh.setVertex(2, ofVec3f(width - marginX - fadeOutLength, marginY, 0.0));
-    menuMesh.setVertex(3, ofVec3f(width - marginX, marginY, 0.0));
-    menuMesh.setVertex(6, ofVec3f(width - marginX - fadeOutLength, marginY + menuBarHeight/2, 0.0));
-    menuMesh.setVertex(7, ofVec3f(width - marginX, marginY + menuBarHeight/2, 0.0));
-    menuMesh.setVertex(10, ofVec3f(width - marginX - fadeOutLength, marginY + menuBarHeight, 0.0));
-    menuMesh.setVertex(11, ofVec3f(width - marginX, marginY + menuBarHeight, 0.0));
-
-    // 0 - 1 - 2 - 3
-    // 4 - 5 - 6 - 7
-    lineMesh.setVertex(2, ofVec3f(width - marginX - fadeOutLength, marginY, 0.0));
-    lineMesh.setVertex(3, ofVec3f(width - marginX, marginY, 0.0));
-    lineMesh.setVertex(6, ofVec3f(width - marginX - fadeOutLength, marginY + menuBarHeight, 0.0));
-    lineMesh.setVertex(7, ofVec3f(width - marginX, marginY + menuBarHeight, 0.0));
-
-    int x = marginX + 2*fadeOutLength/3 + buttonMarginX;
+    int x = marginX;
 
     for (int i = 0; i < buttons.size(); i++) {
         Button* b = &buttons[i];
@@ -255,21 +131,24 @@ void UI::reconfigure() {
         int textWidth = font.stringWidth(b->text);
         int textHeight = font.stringHeight(b->text);
 
-        int y = marginY;
-
-        int textX = x + buttonMarginX;
-        int textY = marginY + menuBarHeight/2.5 + textHeight/2;
-
-        int buttonWidth = textWidth + 2*buttonMarginX;
+        x += b->marginX;
 
         b->x = x;
-        b->y = y;
-        b->textX = textX;
-        b->textY = textY;
-        b->width = buttonWidth;
-        b->height = menuBarHeight-1; // The -1 is to account for the line at the bottom of the menu
+        b->y = marginY + b->marginY;
 
-        x += textWidth + 3*buttonMarginX;
+        b->width = textWidth + 2*b->paddingX;
+        b->height = textHeight + 2*b->paddingY;
+
+        b->textX = b->x + b->paddingX;
+        b->textY = b->y + (b->height/2) + (textHeight/2) - 3;
+
+        int totalHeight = b->height + 2*b->marginY;
+
+        if (totalHeight > height) {
+            height = totalHeight;
+        }
+
+        x += b->width;
     }
 }
 
@@ -280,6 +159,11 @@ void UI::addButton(std::string text, int startState) {
     b.text = text;
 
     b.state = startState;
+
+    b.marginX = 10;
+    b.marginY = 10;
+    b.paddingX = 10;
+    b.paddingY = 6;
 
     buttons.push_back(b);
 
@@ -299,8 +183,8 @@ int UI::getButtonState(int id) {
 // -------------------- Resize event --------------------
 
 void UI::resizeEvent(int w, int h) {
-    width = w;
-    height = h;
+    screenWidth = w;
+    screenHeight = h;
 
     reconfigure();
 }

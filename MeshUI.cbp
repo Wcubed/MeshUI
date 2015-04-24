@@ -36,6 +36,18 @@
 		<Unit filename="config.make">
 			<Option virtualFolder="build config" />
 		</Unit>
+		<Unit filename="src/Button.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Button.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Frame.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/Frame.h">
+			<Option virtualFolder="src/" />
+		</Unit>
 		<Unit filename="src/GenMesh.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>

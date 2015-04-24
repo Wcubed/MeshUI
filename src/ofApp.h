@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-#include "UI.h"
+#include "Frame.h"
 #include "GenMesh.h"
 #include "SphereMesh.h"
 
@@ -24,6 +24,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		// Button functions
+		static void quitButtonFunction();
+
     private:
         int width = 800;
         int height = 800;
@@ -33,7 +36,7 @@ class ofApp : public ofBaseApp{
         // Camera
         ofEasyCam easyCam;
 
-        UI ui;
+        Frame frame;
         GenMesh genMesh;
         SphereMesh sphereMesh;
 };

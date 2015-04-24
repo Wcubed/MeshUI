@@ -309,8 +309,8 @@ obj/linux64/Debug/src/ofApp.o: src/ofApp.cpp src/ofApp.h \
  ../../../libs/openFrameworks/video/ofVideoPlayer.h \
  ../../../libs/openFrameworks/video/ofGstVideoPlayer.h \
  ../../../libs/openFrameworks/3d/ofCamera.h \
- ../../../libs/openFrameworks/3d/ofEasyCam.h src/UI.h src/GenMesh.h \
- src/SphereMesh.h
+ ../../../libs/openFrameworks/3d/ofEasyCam.h src/Frame.h src/Button.h \
+ src/GenMesh.h src/SphereMesh.h
 
 src/ofApp.h:
 
@@ -968,7 +968,9 @@ src/ofApp.h:
 
 ../../../libs/openFrameworks/3d/ofEasyCam.h:
 
-src/UI.h:
+src/Frame.h:
+
+src/Button.h:
 
 src/GenMesh.h:
 
